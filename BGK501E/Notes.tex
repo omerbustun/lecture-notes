@@ -1,0 +1,507 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper, left=0.75in, right=0.75in, top=1in, bottom=1in]{geometry} % Adjusted margins
+\usepackage{amsmath, amssymb} % For mathematical symbols
+\usepackage{enumitem} % For custom lists
+\usepackage{graphicx} % For including images
+\usepackage{hyperref} % For clickable links
+\usepackage{color} % To add color
+\usepackage{parskip} % Adds spacing between paragraphs and removes indent
+\usepackage{titling} % For customizing title spacing
+
+\setlength{\droptitle}{-5em}  % Adjust value to reduce vertical space before title
+
+\begin{document}
+
+\title{BGK501E Lecture Notes}
+\date{\today}
+\author{Ömer Üstün}
+\maketitle
+
+\section*{Introduction to Network Security}
+
+Possible threats to network security:
+
+\begin{itemize}
+    \item DDoS attacks
+    \item Unauthorized access to servers, computers, and data
+    \item Malware injection
+    \item Unauthorized data modification and deletion
+    \item Unauthorized usage of resources
+    \item Damage to customers
+    \item Usage of social engineering
+    \item Advanced persistent threats (APTs)
+\end{itemize}
+
+The attack may come from other trusted networks or it may come from inside.
+
+\begin{description}
+    \item[C]- Confidentiality
+    \item[I]- Integrity
+    \item[A]- Availability 
+\end{description}
+
+\subsection*{Threats to Confidentiality:}
+\begin{itemize}
+    \item Unauthorized access to network
+    \item Malicious software injection
+    \item Unauthorized access to data stored in the network
+    \item Unauthorized access to the data in transit
+\end{itemize}
+
+\subsection*{Threats to Integrity:}
+\begin{itemize}
+    \item Malicious software injection
+    \item Unauthorized modification/deletion of data
+    \item Unauthorized changes to the configuration of network devices and servers
+\end{itemize}
+
+\subsection*{Threats to Availability:}
+\begin{itemize}
+    \item DDoS attacks
+    \item Malicious software injections
+    \item Unauthorized modification/deletion of data
+    \item Data availability attacks (i.e., ransomware)
+    \item Unauthorized changes to the configuration of network devices and servers
+\end{itemize}
+
+Consider the capability of the adversaries and protection requirements because deploying everything you got will be very expensive, add unnecessary cost to each protection mechanism, bring difficulties to perform daily business operations.
+
+You have to strike a balance between protection and availability.
+
+\subsection*{Different classifications of adversaries:}
+\begin{itemize}
+    \item Active/passive adversaries
+    \item Inside/outside adversaries
+    \item Purpose of possible attacks
+\end{itemize}
+
+\subsection*{Protection requirements for assets:}
+\begin{itemize}
+    \item Confidentiality
+    \item Integrity
+    \item Replay protection
+    \item Non-repudiation
+    \item Prevention of malicious usage
+    \item Prevention of unauthorized access
+\end{itemize}
+
+If there's no sensitive data to protect then there's no need to introduce overhead by encryption.
+
+The general approach to network security is to take all the input and output doors to the network under control.
+
+\subsection*{Defense mechanisms in network security:}
+\begin{itemize}
+    \item Physical
+    \begin{itemize}
+        \item Perimeter security
+    \end{itemize}
+    \item Software/hardware
+    \begin{itemize}
+        \item Firewall
+        \item WAF
+        \item SIEM
+        \item IDS/IPS
+        \item DDoS prevention
+        \item IDM (identity management)
+        \item NAC (network access control)
+        \item EDR (endpoint detection and response)
+        \item SOAR (security orchestration automation and response)
+        \item Vulnerability management
+        \item Pentest
+        \item Policies, procedures
+        \item Compliance checks
+        \item Anomaly detection
+    \end{itemize}
+    \item Cryptography and secure communication
+\end{itemize}
+
+\subsection*{Questions and Answers:}
+\textbf{Q:} Since we have these many tools that protect our network, is it still necessary to use cryptography?
+
+\textbf{A:} Yes, it is needed. Because when the data leaves the network it needs to be protected. It also needs to be protected when it is in transit in the network and of course it needs to be protected when at rest.
+
+Cryptography and secure communication provide confidentiality, integrity, non-repudiation, authentication.
+
+\textbf{Q:} If everyone is the receiver, is it necessary to establish a secure channel? (Clue: Consider GPS)
+
+We need to define the risks, the adversaries, and the adversaries' capabilities. Define what we need. Define what the adversaries can do.
+
+\subsection*{Potential of adversaries:}
+\begin{itemize}
+    \item Passive attacks:
+    \begin{itemize}
+        \item Unauthorized access to information (confidentiality)
+        \item Traffic analysis
+    \end{itemize}
+    \item Active attacks:
+    \begin{itemize}
+        \item Impersonation
+        \item Replay attack (A malicious actor intercepting and retransmitting data to produce an unauthorized effect, often deceiving a system into granting access or performing an unintended action.)
+        \item Message modification
+        \item Denial of service (by disrupting the communication)
+        \item Repudiation
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Security solutions on network layers:}
+TCP/IP divides the networking function into 4 layers:
+\begin{itemize}
+    \item Application layer: PGP
+    \item Transport layer: TLS
+    \item Network layer: IPSec
+    \item Datalink layer
+\end{itemize}
+
+\section*{Introduction to Cryptology}
+
+Cryptologyy: Practice and study of techniques based on mathematical and computational problems for secure communication. It alone is not enough for security but it is an essential tool.
+
+\begin{enumerate}
+    \item \textbf{Discrete Logarithm Problem} (DLP):
+    \begin{itemize}
+        \item \textbf{What it is:} Given a base \( g \), a modulus \( p \), and a result \( h \), the discrete logarithm problem is to find an exponent \( x \) such that \( g^x \equiv h \pmod{p} \). In simpler terms, if you know \( g \) raised to some power \( x \) gives you \( h \), the problem is to find that power \( x \).
+        \item \textbf{Why it's important:} DLP is the foundation for many cryptographic protocols, including the Diffie-Hellman key exchange and the Digital Signature Algorithm (DSA). The difficulty of solving the DLP provides the security behind these protocols.
+    \end{itemize}
+    \item \textbf{Integer Factorization Problem}:
+    \begin{itemize}
+        \item \textbf{What it is:} Given a composite number \( n \), the integer factorization problem involves expressing \( n \) as a product of its prime factors.
+        \item \textbf{Why it's important:} The security of the widely used RSA encryption algorithm relies on the difficulty of factorizing large integers. If you can factorize the RSA modulus, you can derive the private key from the public key and break the encryption.
+    \end{itemize}
+    \item \textbf{Solution of Complex Equation Systems}:
+    \begin{itemize}
+        \item \textbf{What it is:} This involves finding solutions to systems of equations that may have multiple variables and can be nonlinear. These equations can be polynomial, exponential, or of other forms.
+        \item \textbf{Why it's important:} Solving complex equation systems has applications in various fields, including optimization, computer algebra, and some cryptographic attacks. The difficulty of solving these systems can also be used as a basis for cryptographic security in certain scenarios.
+    \end{itemize}
+\end{enumerate}
+
+In the context of cryptography, these problems are computationally hard to solve, especially as the input size grows. This "hardness" provides the security foundation for various cryptographic schemes.
+
+\subsection*{Use cases:}
+\begin{description}
+    \item[Confidentiality:] Only authorized parties can access data.
+    \item[Non-repudiation:] The sender cannot dispute the origin of the data.
+    \item[Integrity:] Data cannot be modified by unauthorized parties.
+    \item[Authentication:] Identification of the entities are proved.
+    \item[Secret sharing:] A secret is shared between \(n\) parties and any \(k\) out of \(n\) parties can construct the secret.
+    \item[Secure multi-party computation:] Parties want to compute a function using their private data but they don't want to leak their data to each other.
+    \item[Privacy:] Parties want to hide their identities and their data while utilizng comm. and computation. 
+\end{description}
+
+\subsection*{Cryptology}
+Cryptology is divided into two main subfields:
+\begin{description}
+    \item[Cryptography:] Design of cryptographic solutions. 
+    \item[Cryptoanalysis:] Security anaylsis of cryptographic solutions.
+\end{description}
+
+\subsection*{Basic Encryption Model}
+
+\textbf{Kerckhoffs' Principle (1883):} \\
+\emph{``Security should not rely on the secrecy of the algorithm; everything may be known but the key.''}
+
+\[D(k_d, E(k_e, p)) = p\]
+
+\begin{description}
+    \item[\(D\):] Decryption
+    \item[\(E\):] Encryption
+    \item[\(k_d\):] Decryption key
+    \item[\(k_e\):] Encryption key
+    \item[\(p\):] Plaintext     
+    \item[\(c\):] Ciphertext 
+\end{description}
+
+\subsection*{Adversary model}
+\textbf{Questions for modelling:}
+\begin{itemize}
+    \item Can the adversary learn the encrypted data?
+    
+    \emph{Sniffs the network}
+    \item Can the adversary modify the encrypted data?
+    
+    \emph{Sniffs the network, modifies the data and sends the data to the receiver}
+    \item Can the adversary sit between the communicating parties?
+    
+    \emph{Changes the proxy configurations in the computer of the victim}
+    \item What is the computation power of the adversary?
+    
+    \emph{May have thousands of computation cores. Lets assume one core performs 232
+    operations in 1 minute. One core can compute \(232 \times 60 \times 24 \times 365 \times 1000 \cong 261\)
+    operations in 1000 years. The adversary can perform \(261 \times 1000000 \cong 281\) operations
+    if he/she has 1 million computation cores. That is this adversary can learn the 80-bit
+    secret key of an encryption algorithm by brute-force attack in 250 years in average.}
+    \item Can the adversary learn corresponding ciphertext for the plaintext chosen by himself online or offline?
+    
+    \emph{Assume that in a cryptographic protocol, party A sends a challenge (random number) to
+    be encrypted to party B to authenticate party B. The adversary can use party B as an
+    encryption oracle, sends a plaintext and party B returns the corresponding ciphertext.}
+\end{itemize}
+
+
+\subsection*{Some adversary models regarding data usable by the adversary}
+\begin{description}
+    \item[Known plaintext attack (KPA):] The adversary knows plaintext-ciphertext pairs.
+    \item[Ciphertext-only attack (COA):] The adversary only knows ciphertexts.
+    \item[Chosen plaintext attack (CPA):] The adversary can learn encryption result of any plaintext chosen by the adversary.
+    \item[Chosen ciphertext attack (CCA):] The adversary can learn decryption result of any ciphertext chosen by the adversary.
+    \item[Adaptive chosen ciphertext attack (CCA2):] The adversary can learn decryption result of any ciphertext chosen by the adversary during the attack.
+    \item[Adaptive chosen plaintext attack (CPA2):] The adversary can learn encryption result of any plaintext chosen by the adversary during the attack.     
+\end{description}
+
+
+\subsection*{Security Definition}
+
+\noindent\textbf{Definition:}
+An encryption algorithm is said to be \textbf{secure} if the difference between:
+\begin{itemize}
+    \item The probability of determining partial information about the plaintext for a given ciphertext, and
+    \item The probability of determining partial information about the plaintext without the given ciphertext,
+\end{itemize}
+is negligible.
+
+\noindent Mathematically, this can be represented as:
+\[ \text{Pr} [p|c] - \text{Pr}[p] = \varepsilon \]
+
+\noindent\textbf{In other words:}
+The adversary should not have any advantage in learning additional information about the plaintext when he knows the ciphertext.
+
+\noindent\textbf{Illustration:}
+In an example where the plaintext space consists of alphabetical characters:
+\begin{itemize}
+    \item Without the ciphertext, the adversary already knows that the plaintext consists of alphabetical characters.
+    \item Possessing the ciphertext should not increase the adversary's knowledge about the plaintext, assuming the encryption algorithm is secure.
+\end{itemize}
+
+\subsection*{Historical Encryption Examples}
+
+\noindent\textbf{Shift Ciphers (Caesar Ciphers):}
+
+Shift ciphers, one of the earliest encryption techniques, involve shifting each letter in the plaintext by a fixed number of positions in the alphabet.
+
+Given an \( n \)-letter alphabet, where \( p \), \( c \), and \( k \) are elements of \( \mathbb{Z}_n \):
+\begin{align*}
+    E_k(p) &= (p + k) \mod n \\
+    D_k(c) &= (c - k) \mod n
+\end{align*}
+
+\textbf{Security Analysis:} 
+\begin{itemize}
+    \item Is this cipher secure? It's considered insecure by modern standards due to its simplicity.
+    \item Key Recovery: One can employ an exhaustive key search (brute-force attack). Given that there are only \( n \) possible shifts, an attacker can systematically try each shift until the correct decryption is found.
+\end{itemize}
+
+\noindent\textbf{Substitution Cipher:}
+
+In substitution ciphers, each letter or symbol in the plaintext is replaced by another letter or symbol.
+
+Given \( p, c \in \mathbb{Z}_n \); \( k \) is a bijection, \( f \), over \( \mathbb{Z}_n \):
+\begin{align*}
+    E_k(p) &= f(p) \\
+    D_k(c) &= f^{-1}(c)
+\end{align*}
+
+\textbf{Security Analysis:}
+\begin{itemize}
+    \item Brute-force? The number of possible keys is \( n! \). For a 26-letter alphabet, it is approximately \( 2^{88} \), making brute-force impractical.
+    \item Frequency Analysis: By computing the distribution of letters in the ciphertext and comparing to known letter distributions in the language, one can deduce likely substitutions.
+\end{itemize}
+
+\noindent\textbf{Permutation Cipher:}
+
+In permutation ciphers, the letters of the plaintext are rearranged according to a pre-defined system or pattern.
+
+\textbf{Security Analysis:}
+\begin{itemize}
+    \item The key is essentially the specific permutation used.
+    \item Brute-force? The number of possible keys for 30-letter messages is \( 30! \), approximately \( 2^{108} \).
+    \item Cryptanalysis: The cipher can potentially be broken using statistics of the language or known plaintext attacks.
+\end{itemize}
+
+\noindent\textbf{One-Time Pad (Vernam Cipher, 1917):}
+
+The One-Time Pad (OTP) requires a key that is as long as the message and is used only once.
+
+\begin{itemize}
+    \item Shannon's Proof (1949): OTP offers perfect secrecy.
+    \item If \( \text{Pr } p_c - \text{Pr } p = \epsilon \) and this difference is 0, then the encryption has perfect secrecy.
+    \item \textbf{Perfect Secrecy:} Every plaintext has equal probability to be encrypted to a given ciphertext, making it information-theoretically secure.
+\end{itemize}
+
+\noindent\textbf{Computational vs. Information-Theoretic Security:}
+
+\begin{itemize}
+    \item 128-bit AES encryption: Computationally secure.
+    \item One-Time Pad: Information-theoretically secure. Given a ciphertext, the plaintext can be anything from the plaintext space since the key length equals the plaintext length.
+\end{itemize}
+
+\noindent\textbf{Redundancy Check:}
+
+Redundancy checks, like CRC (Cyclic Redundancy Check), detect and potentially rectify changes in messages.
+
+\begin{itemize}
+    \item Can this be used against modifications of encrypted data by adversaries? No, because adversaries can compute CRC for modified data. Cryptographic solutions, like hash functions, are essential.
+\end{itemize}
+
+\noindent\textbf{Freshness:}
+
+Ensuring the "freshness" of data can prevent replay attacks.
+
+\begin{itemize}
+    \item Prevention methods: Use timestamps or message sequence numbers.
+    \item Importance: Always define the attack model first and then design a solution for the threat.
+\end{itemize}
+
+
+\section*{Symmetric Key Cryptography}
+
+Symmetric means that the keys used in security-related transformations (encryption, decryption) in both sender and receiver sides are the same.
+
+Both entities must have the key \(k\) in a secure way.
+
+\noindent\textbf{Symmetric Encryption Algorithm Definition:}
+
+Let \( \mathcal{K} \), \( \mathcal{P} \), \( \mathcal{C} \), \( E \), and \( D \) define the encryption algorithm where:
+\begin{align*}
+& E: \mathcal{K} \times \mathcal{P} \rightarrow \mathcal{C} \\
+& D: \mathcal{K} \times \mathcal{C} \rightarrow \mathcal{P} \\
+& \forall p \in \mathcal{P}, k \in \mathcal{K} \quad D(k, E(k, p)) = p
+\end{align*}
+
+\begin{itemize}
+    \item \( \mathcal{K} \) represents the \textbf{key space}. This denotes the set of all potential keys that could be utilized for both encryption and decryption in a symmetric encryption scheme. When we refer to \( k \in \mathcal{K} \), it signifies an individual key selected from this key space.
+
+    \item \( \mathcal{P} \) denotes the \textbf{plaintext space}, which is the set of all conceivable plaintexts that can be encrypted. An element \( p \in \mathcal{P} \) refers to a specific plaintext message from this set.
+\end{itemize}
+
+The notation \( \forall p \in \mathcal{P}, k \in \mathcal{K} \) underscores a behavior or property that remains true for every possible combination of plaintext and key. Specifically, in the definition:
+
+\[
+\forall p \in \mathcal{P}, k \in \mathcal{K} \quad D(k, E(k, p)) = p
+\]
+
+This states that for every conceivable plaintext \( p \) and every possible key \( k \), if one encrypts \( p \) using \( k \) to produce a certain ciphertext, then decrypts that ciphertext using the identical key \( k \), the original plaintext \( p \) is retrieved. This emphasizes the fundamental correctness of the encryption and decryption operations: they perfectly reverse each other, provided the same key is used for both functions.
+
+\subsection*{Block Ciphers}
+
+Block ciphers are a category of symmetric encryption algorithms that operate on fixed-size blocks of plaintext to produce fixed-size blocks of ciphertext. 
+
+\begin{itemize}
+    \item \textbf{Block Length (\( n \))}: This refers to the size (in bits) of the input data block that the cipher operates on. For instance, a block cipher with a block length of 128 bits operates on 128 bits of plaintext at a time to produce 128 bits of ciphertext.
+
+    \item \textbf{Key Size (\( m \))}: The size (in bits) of the key used for encryption and decryption. The size of the key determines the number of possible keys in the key space.
+
+    \item \textbf{Key Space (\( \mathcal{K} \))}: The set of all possible keys that can be used for encryption and decryption. Specifically, \( \mathcal{K} = \{0,1\}^m \), implying that there are \( 2^m \) potential keys.
+
+    \item \textbf{Plaintext Space (\( \mathcal{P} \)) and Ciphertext Space (\( \mathcal{C} \))}: Both the plaintext and ciphertext spaces are defined as \( \{0,1\}^n \), meaning each plaintext or ciphertext block consists of \( n \) bits. Thus, there are \( 2^n \) possible n-bit blocks.
+
+    \item \textbf{Encryption (\( E \)) and Decryption (\( D \)) Functions}: 
+    \begin{align*}
+        & E: \mathcal{K} \times \mathcal{P} \rightarrow \mathcal{C} \\
+        & D: \mathcal{K} \times \mathcal{C} \rightarrow \mathcal{P}
+    \end{align*}
+    The encryption function takes a key and a plaintext block as input and produces a ciphertext block. The decryption function, conversely, takes a key and a ciphertext block and recovers the original plaintext block.
+
+    \item \textbf{Correctness Property}: For every possible key \( k \) and every possible plaintext block \( p \), decrypting the encryption of \( p \) using \( k \) should return \( p \). Formally, \( \forall p \in \mathcal{P}, k \in \mathcal{K} \quad D(k, E(k, p)) = p \).
+\end{itemize}
+
+In practice, when a message is encrypted using a block cipher, it is first divided into \( n \)-bit blocks (where \( n \) is the block size of the encryption algorithm). Each of these blocks is then encrypted individually using the same key \( k \). The resulting ciphertext blocks are concatenated to produce the final encrypted message. Decryption operates in a similar manner, decrypting each block separately and then concatenating them to recover the original message.
+
+\subsection*{Stream Ciphers}
+
+Stream ciphers are a type of symmetric encryption algorithm that encrypts plaintext one bit (or sometimes one byte) at a time. They differ from block ciphers, which operate on fixed-size blocks of data.
+
+\begin{itemize}
+    \item \textbf{Key Expansion}: Unlike block ciphers, stream ciphers do not operate on fixed blocks of plaintext. Instead, a short key is expanded into a longer key stream that is as long as the message. This key stream is generated using a pseudo-random number generator (PRNG) or a similar mechanism.
+
+    \item \textbf{Encryption Process}: The generated key stream is combined with the plaintext, typically using the bitwise exclusive-or (XOR) operation, to produce the ciphertext. Mathematically, this can be expressed as:
+    \[
+    E_{IV, k, p} = G(IV, k) \oplus p
+    \]
+    where \( E \) is the encryption process, \( G \) is the key stream generator, \( IV \) is the initialization vector, \( k \) is the key, and \( p \) is the plaintext.
+
+    \item \textbf{Initialization Vector (IV)}: Stream ciphers often use an IV along with the key to produce the key stream. The IV ensures that the same key produces different key streams for different sessions or messages, thereby ensuring that the same plaintext does not result in the same ciphertext across sessions. The IV is typically sent along with the ciphertext to the receiver, as it is required for decryption but doesn't need to be kept secret.
+
+    \item \textbf{Importance of IV}: Without the use of an IV, encrypting two different messages with the same key would produce key streams \( ks \) that could lead to vulnerabilities. For instance, given ciphertexts \( c1 = p1 \oplus ks \) and \( c2 = p2 \oplus ks \), an attacker could compute:
+    \[
+    c1 \oplus c2 = (p1 \oplus ks) \oplus (p2 \oplus ks) = p1 \oplus p2
+    \]
+    This would reveal information about the XOR of the two plaintexts, which is a significant security risk. The use of an IV ensures that the key streams are different for different encryptions, mitigating this risk.
+\end{itemize}
+
+In conclusion, stream ciphers offer flexibility in encrypting data of varying lengths, but care must be taken to ensure the key stream is unique for each encryption to maintain security.
+
+
+\subsection*{Comparison: Block Ciphers vs. Stream Ciphers}
+
+Block ciphers and stream ciphers are both symmetric encryption algorithms, but they have distinct characteristics and are suited for different use cases. Here is a comparison between the two:
+
+\begin{itemize}
+    \item \textbf{Performance for Short Messages}: Stream ciphers can be slower than block ciphers for short messages. This is primarily due to the initialization steps in stream ciphers to produce the key stream. In contrast, block ciphers, with their fixed block size, are more efficient for these shorter lengths.
+    
+    \item \textbf{Performance for Long Messages}: For longer messages, stream ciphers tend to have better performance. Once the key stream is generated, encryption is a simple matter of XORing the key stream with the plaintext, which can be very fast.
+
+    \item \textbf{Offline Key Stream Generation}: One advantage of stream ciphers is that the key stream can be generated offline, ahead of time. When encryption needs to be performed, the message can simply be XORed with the pre-generated key stream, allowing for potentially faster real-time encryption.
+
+    \item \textbf{Trend Towards Lightweight Block Ciphers}: There is a growing trend in the design and analysis of lightweight block ciphers. These ciphers are designed to require fewer resources, making them suitable for applications with constraints on area, battery power, and other resources.
+\end{itemize}
+
+While both block and stream ciphers have their strengths, the choice between them largely depends on the specific requirements of the application and the nature of the data being encrypted.
+
+
+\subsection*{Structure of Block Ciphers}
+
+Block ciphers are cryptographic algorithms that encrypt data in fixed-size blocks, typically using a symmetric key. They are designed to provide both confusion and diffusion, ensuring that the relationship between the plaintext, ciphertext, and key is complex and non-obvious.
+
+\begin{itemize}
+    \item \textbf{Round Functions}: Block ciphers operate using multiple rounds of encryption. Each round applies a series of transformations to the input data, increasing the complexity of the encryption.
+
+    \item \textbf{Round Output}: The output of each round is determined by the round key and the output of the previous round. For the first round, the input is the plaintext, while the output of the last round is the ciphertext.
+
+    \item \textbf{Key Schedule}: A key schedule algorithm is used to derive round keys from the main encryption key. This ensures that each round uses a different key, enhancing security.
+
+    \item \textbf{Substitution and Permutation}: Block ciphers use a combination of substitution (non-linear transformation) and permutation (linear transformation) operations in their round functions. This combination ensures both confusion (making the relationship between the plaintext and ciphertext complex) and diffusion (ensuring that changes to the plaintext spread out in the ciphertext).
+\end{itemize}
+
+\subsubsection*{Substitution-Permutation Network (SPN) Based Algorithm Structure}
+
+The Substitution-Permutation Network (SPN) is a common structure for block ciphers. It involves multiple rounds of substituting input bits with different bits (using S-boxes) and then permuting or rearranging those bits (using a linear layer). The process can be visualized as:
+
+\begin{verbatim}
+   Plaintext
+       |
+   XOR with 1st round key
+       |
+   S-box substitutions
+       |
+   Linear Layer
+       |
+   ... (repeated for multiple rounds)
+       |
+   XOR with r-th round key
+       |
+   Ciphertext
+\end{verbatim}
+
+In this structure, the S-boxes provide non-linear transformations, ensuring complexity, while the linear layer ensures diffusion, spreading out changes across the ciphertext.
+
+\subsubsection*{Feistel Type Structure}
+
+Feistel ciphers are a specific type of block cipher structure. Their main characteristics include:
+
+\begin{itemize}
+    \item \textbf{Division of Input}: The input to each round is divided into two halves.
+
+    \item \textbf{Update and Swap}: Only one half is updated in each round, using a function often referred to as the \(F\) function. At the end of the round, the two halves are swapped.
+
+    \item \textbf{\(F\) Function}: The \(F\) function typically involves adding the round key, a non-linear transformation such as an S-box (substitution box), and a linear transformation like a permutation.
+\end{itemize}
+
+The Feistel structure ensures that even though only half of the data is transformed in each round, changes propagate through the entire block over multiple rounds.
+
+
+
+
+
+
+
+
+\end{document}

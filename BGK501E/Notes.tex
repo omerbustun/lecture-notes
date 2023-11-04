@@ -497,9 +497,83 @@ Feistel ciphers are a specific type of block cipher structure. Their main charac
 
 The Feistel structure ensures that even though only half of the data is transformed in each round, changes propagate through the entire block over multiple rounds.
 
+\subsubsection*{Data Encryption Standard (DES)}
+
+The Data Encryption Standard (DES) is a symmetric-key algorithm for the encryption of electronic data. Established in 1977 by the National Bureau of Standards (now NIST), DES has played a foundational role in the development of modern encryption techniques:
+
+\begin{itemize}
+    \item \textbf{Origins}: DES is derived from the earlier LUCIFER cipher, designed by H. Feistel and others at IBM in 1970.
+    \item \textbf{Structure}: It is structured as a Feistel cipher, consisting of 16 rounds of processing for each 64-bit block.
+    \item \textbf{Key Size}: The algorithm uses a 56-bit key, providing a balance between security and performance at the time of its design.
+    \item \textbf{Round Function Inputs}: The round function of DES takes a 32-bit input and combines it with a 48-bit round key.
+    \item \textbf{Cryptanalysis}: DES is susceptible to differential and linear cryptanalysis, vulnerabilities that stem from its structure and key size.
+    \item \textbf{Brute-Force Attacks}: The 56-bit key size, while substantial at its inception, is now considered small enough to be vulnerable to brute-force attacks with modern computing power.
+\end{itemize}
+
+DES's legacy in cryptography is significant, illustrating the evolution of cryptographic techniques and the ongoing challenge of maintaining security against increasing computational capabilities.
+
+\subsubsection*{Triple Data Encryption Standard (3DES)}
+
+Triple DES, often referred to as 3DES, is an enhancement of the original Data Encryption Standard (DES) algorithm, designed to provide stronger security through layered encryption:
+
+\begin{itemize}
+    \item \textbf{Introduction}: 3DES was proposed in 1979 as a response to the vulnerabilities of DES, particularly its susceptibility to brute-force attacks.
+    \item \textbf{Key Size Variants}: The algorithm supports key sizes of 112 bits (with \( k1 = k3 \)) and 168 bits, effectively doubling and tripling the DES key size, respectively.
+    \item \textbf{Encryption-Decryption-Encryption (E-D-E) Structure}: 3DES uses a sequence of three DES operations; encryption with \( k1 \), decryption with \( k2 \), and a final encryption with \( k3 \). The decryption step with \( k2 \) doesn't reverse the initial encryption because it uses a different key, thereby contributing to the overall encryption process.
+    \item \textbf{Backward Compatibility with DES}: In scenarios where \( k1 = k2 = k3 \), 3DES simplifies to the original DES algorithm. This design allows 3DES to operate in environments where only DES is supported, ensuring backward compatibility.
+\end{itemize}
+
+By applying the DES cipher three times to each data block, 3DES significantly increases the difficulty of brute-force attacks, making it a more secure option at the time of its development.
+
+\subsubsection*{Advanced Encryption Standard (AES)}
+
+Advanced Encryption Standard (AES) is the result of a competition held by NIST to find a robust encryption standard for securing sensitive government information:
+
+\begin{itemize}
+    \item \textbf{Selection as Standard}: AES was selected as the new standard algorithm for the United States in 1998, succeeding DES due to its higher security level.
+    \item \textbf{Origin}: Originally named Rijndael, AES was designed by Vincent Rijmen and Joan Daemen, who submitted it to the NIST competition.
+    \item \textbf{Block Length}: It operates on 128-bit blocks, ensuring compatibility with a wide range of applications and platforms.
+    \item \textbf{Key Sizes}: AES supports multiple key lengths of 128, 192, and 256 bits, accommodating various security requirements and computational constraints.
+    \item \textbf{Number of Rounds}: The algorithm's rounds depend on the key length; 10 rounds for 128-bit keys, 12 rounds for 192-bit keys, and 14 rounds for 256-bit keys.
+    \item \textbf{FIPS Standardization}: AES was standardized as FIPS 197 in November 2001, reinforcing its credibility and adoption in cryptographic applications.
+    \item \textbf{8-bit Operations}: All operations in AES are performed on 8-bit bytes. This byte-oriented approach enhances the algorithm's performance across diverse computing platforms, from hardware implementations to software execution.
+\end{itemize}
+
+AES's adoption is widespread, becoming the de facto encryption technique for various industries due to its strength and efficiency.
 
 
+\subsubsection*{Stream Ciphers}
 
+Stream ciphers are a type of symmetric encryption where plaintext is combined with a pseudorandom cipher digit stream (key stream). Each plaintext digit is encrypted one at a time with the corresponding digit of the key stream, to give a digit of the ciphertext stream.
+
+\begin{itemize}
+    \item \textbf{Key Length}: Typically, stream ciphers use shorter key lengths compared to block ciphers, which can be advantageous in resource-constrained environments.
+    \item \textbf{Key Stream Generation}: A smaller key can be expanded to produce the required number of key bits, creating a key stream that can be as long as the plaintext.
+    \item \textbf{Initialization Vectors (IV)}: To maintain security, different IVs are used for each plaintext. This ensures that the same plaintext will produce different ciphertexts each time it is encrypted.
+\end{itemize}
+
+\begin{align*}
+    &\text{For encryption: } &F(k, IV, p) &= G(k, IV) \oplus p = c, \\
+    &\text{For decryption: } &E(k, IV, c) &= G(k, IV) \oplus c = p, \\
+    &\text{where } &G &: \text{key stream generator.}
+\end{align*}
+
+Despite the practicality of stream ciphers in certain applications, they are not considered perfectly secure. The key stream must never be reused, as this can lead to vulnerabilities.
+
+\subsubsection*{Trivium}
+
+Trivium is a noteworthy example of a stream cipher that emphasizes simplicity and speed, particularly in hardware implementations:
+
+\begin{itemize}
+    \item \textbf{Standardization}: It is recognized as part of the ISO/IEC 29192-3 standard, reflecting its acceptance in international cryptographic practices.
+    \item \textbf{Origins}: Developed under the eSTREAM project, Trivium was designed to be a lightweight cipher suitable for a wide range of applications.
+    \item \textbf{Designers}: The cipher was created by Christophe De Cannière and Bart Preneel, who are known for their contributions to cryptographic algorithms.
+    \item \textbf{Internal State and Registers}: Trivium operates with a 288-bit internal state and consists of three distinct shift registers that interact during the cipher's execution.
+    \item \textbf{Operation}: In each round of the cipher, a bit is shifted into each register, and simultaneously, a single output bit (\( z_i \)) is produced, contributing to the keystream.
+    \item \textbf{Initialization}: The key and IV are loaded into the registers, followed by 1152 initialization rounds to ensure diffusion and avoid any simple relations between the key, IV, and the beginning of the output keystream.
+\end{itemize}
+
+The design of Trivium allows for efficient implementation while maintaining a high level of security, making it a practical choice for systems with limited computational resources.
 
 
 

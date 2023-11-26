@@ -576,54 +576,54 @@ Trivium is a noteworthy example of a stream cipher that emphasizes simplicity an
 The design of Trivium allows for efficient implementation while maintaining a high level of security, making it a practical choice for systems with limited computational resources.
 
 
-\section*{Modes of Operation}
+\subsection*{Modes of Operation}
 
 Encryption modes define how block ciphers process plaintext to produce ciphertext. Two basic types are commonly distinguished:
 
-\subsection*{Monoalphabetic vs. Polyalphabetic Modes:}
+\subsubsection*{Monoalphabetic vs. Polyalphabetic Modes:}
 \begin{itemize}
     \item \textbf{Monoalphabetic:} In this type of encryption mode, the encryption of each plaintext block is independent of its position in the sequence. This means that identical plaintext blocks will result in identical ciphertext blocks.
     \item \textbf{Polyalphabetic:} Contrary to monoalphabetic, in polyalphabetic modes, the encryption of a plaintext block depends on its position in the sequence. This results in different ciphertexts for identical plaintext blocks occurring at different positions.
     \item \textbf{Electronic Code Book (ECB):} This is a basic form of block cipher encryption where each block of plaintext is encrypted independently. ECB falls under the category of monoalphabetic encryption. However, its simplistic nature leads to security vulnerabilities, as patterns in the plaintext may remain visible in the ciphertext.
 \end{itemize}
 
-\subsection*{Security of ECB Mode:}
+\subsubsection*{Security of ECB Mode:}
 Is ECB mode secure? No. The lack of dependency between encrypted blocks in ECB mode leads to significant vulnerabilities, especially when dealing with large data sets or repetitive information. It fails to disguise data patterns, making it susceptible to cryptanalysis.
 
-\subsection*{Cipher Block Chaining (CBC) Mode:}
+\subsubsection*{Cipher Block Chaining (CBC) Mode:}
 \begin{itemize}
     \item \textbf{Characteristics:} In CBC mode, each block of plaintext is XORed with the previous ciphertext block before being encrypted. This means that each ciphertext block depends on all plaintext blocks processed up to that point.
     \item \textbf{Monoalphabetic or Polyalphabetic:} CBC mode is classified as polyalphabetic because the encryption of each plaintext block is influenced by its position in the sequence and the preceding ciphertext blocks.
     \item \textbf{Effect of a One Bit Change:} A one-bit change in the second ciphertext block in CBC mode will result in the complete change of the subsequent plaintext block during decryption. This property, known as error propagation, highlights the interdependence of blocks in CBC mode.
 \end{itemize}
 
-\section*{Hash Functions}
+\subsection*{Hash Functions}
 
 Hash functions are fundamental in cryptography, serving as a way to convert variable-length input into a fixed-length value, commonly referred to as a digest. Key properties of cryptographic hash functions include:
 
-\subsection*{Preimage Resistance:}
+\subsubsection*{Preimage Resistance:}
 \begin{itemize}
     \item \textbf{Definition:} For a given digest \( d \), it must be computationally hard to find a message \( M \) such that \( H(M) = d \).
     \item \textbf{Theoretical Bound:} The theoretical bound to find a preimage for a given digest \( d \) is \( 2^{|d|} \) hash function calls. This is based on the principle that for a randomly chosen message \( M' \), \( \text{Pr}[H(M')=d]=2^{-|d|} \). Thus, the digest of one of \( 2^{|d|} \) randomly chosen messages will be \( d \).
 \end{itemize}
 
-\subsection*{Second Preimage Resistance:}
+\subsubsection*{Second Preimage Resistance:}
 \begin{itemize}
     \item \textbf{Definition:} For a given message \( M \), it must be computationally hard to find a different message \( M' \) such that \( H(M')=H(M) \).
     \item \textbf{Theoretical Bound:} The theoretical bound to find a second preimage for a given digest \( d \) is \( 2^{|d|} \), for reasons similar to those outlined in preimage resistance.
 \end{itemize}
 
-\subsection*{Collision Resistance:}
+\subsubsection*{Collision Resistance:}
 \begin{itemize}
     \item \textbf{Definition:} It must be computationally hard to find a message pair \( M \) and \( M' \) such that \( H(M')=H(M) \).
     \item \textbf{Theoretical Bound:} The theoretical bound to find a collision is \( 2^{|d|/2} \) due to the birthday paradox. The birthday paradox suggests that the probability of two randomly selected messages having the same digest increases significantly with the square root of the possible digest values.
 \end{itemize}
 
-\section*{Birthday Paradox in Cryptography}
+\subsection*{Birthday Paradox in Cryptography}
 
 The Birthday Paradox addresses the counterintuitive probability of collisions in a set, having significant implications in cryptographic hash functions.
 
-\subsection*{Collision Probability Calculation:}
+\subsubsection*{Collision Probability Calculation:}
 \begin{itemize}
     \item \textbf{Scenario:} Considering randomly chosen \( t \) elements (\( x_1, x_2, \ldots, x_t \)) from a set \( A \), we assess the probability that there exists a pair (\( x_i, x_j \)) such that \( i \neq j \) and \( x_i = x_j \) (collision).
     \item \textbf{Probability Computation:} 
@@ -645,7 +645,7 @@ The Birthday Paradox addresses the counterintuitive probability of collisions in
     \]
 \end{itemize}
 
-\subsection*{Determining the Collision Threshold:}
+\subsubsection*{Determining the Collision Threshold:}
 \begin{itemize}
     \item \textbf{Goal:} To find the minimum number of elements \( t \) required to achieve a collision probability greater than \( \frac{1}{2} \).
     \item \textbf{Calculation:} 
@@ -664,54 +664,53 @@ The Birthday Paradox addresses the counterintuitive probability of collisions in
     \end{itemize}
 \end{itemize}
 
-\section*{Hash Function Constructions}
+\subsection*{Hash Function Constructions}
 
 Cryptographic hash functions often use specific constructions to ensure their security properties. Two notable constructions are the Merkle-Damgård and Davies-Meyer.
 
-\subsection*{Merkle-Damgård Construction:}
+\subsubsection*{Merkle-Damgård Construction:}
 \begin{itemize}
     \item \textbf{Process:} The input message is divided into equal-sized blocks, which are then processed sequentially through a compression function. This iterative process ensures that the final output (the hash) depends on every part of the input message.
     \item \textbf{Length Padding:} Messages are padded with a bit pattern, typically '100...0', followed by the length of the message. This padding is crucial to ensure that different messages do not produce the same hash due to coincidental alignment or similar endings.
     \item \textbf{Finalization:} An optional finalization step can be added to further randomize the hash output.
     \item \textbf{Provable Security:} The security of the Merkle-Damgård construction is directly tied to the collision resistance of its compression function. If the compression function is collision-resistant, so is the overall hash function.
 \end{itemize}
-
-\subsection*{Davies-Meyer Construction:}
+\subsubsection*{Davies-Meyer Construction:}
 \begin{itemize}
     \item \textbf{Compression Function:} This construction uses a block cipher as the basis for its compression function.
     \item \textbf{Provable Security:} The Davies-Meyer construction is provably secure (collision-resistant) under the assumption that the underlying block cipher is secure. This means that the ability to find collisions in the hash function is equivalent to breaking the security of the block cipher.
 \end{itemize}
 
-\section*{SHA-1 and Its Successors}
+\subsection*{SHA-1 and Its Successors}
 
 SHA-1 is a widely recognized cryptographic hash function, with a notable history and evolution leading to more secure successors.
 
-\subsection*{SHA-1:}
+\subsubsection*{SHA-1:}
 \begin{itemize}
     \item \textbf{Design and Origin:} SHA-1, developed by the National Security Agency (NSA), is based on Ron Rivest's MD4 and MD5 designs. Initially released as SHA in 1993, SHA-1 was introduced in 1995.
     \item \textbf{Output Size:} It produces a 160-bit hash value, commonly rendered as a 40-digit hexadecimal number.
     \item \textbf{Vulnerabilities:} In 2005, significant flaws were discovered in SHA-1, indicating vulnerabilities to collision attacks.
 \end{itemize}
 
-\subsection*{SHA-2:}
+\subsubsection*{SHA-2:}
 \begin{itemize}
     \item \textbf{Introduction:} As a response to the vulnerabilities in SHA-1, SHA-2 was developed, offering enhanced security features.
     \item \textbf{Variants:} SHA-2 includes variants with 256- and 512-bit output sizes, significantly increasing its resistance to collision attacks compared to SHA-1.
     \item \textbf{Current Security:} SHA-2 remains secure and widely used in various cryptographic applications and protocols.
 \end{itemize}
 
-\subsection*{SHA-3:}
+\subsubsection*{SHA-3:}
 \begin{itemize}
     \item \textbf{Development:} SHA-3, developed through a public competition, was finalized in 2012. The winning algorithm was Keccak.
     \item \textbf{Distinct Approach:} Unlike SHA-2, SHA-3 is not based on the Merkle-Damgård construction, instead using a unique sponge construction, which provides a higher level of security and flexibility.
     \item \textbf{Role:} SHA-3 complements SHA-2, offering an alternative in case future vulnerabilities are discovered in the SHA-2 family.
 \end{itemize}
 
-\section*{Message Authentication Codes (MACs)}
+\subsection*{Message Authentication Codes (MACs)}
 
 Message Authentication Codes (MACs) play a crucial role in ensuring the integrity and authenticity of messages in cryptographic communication.
 
-\subsection*{Concept and Operation:}
+\subsubsection*{Concept and Operation:}
 \begin{itemize}
     \item \textbf{Basic Principle:} MACs can be considered as keyed hash functions. They take a key \( K \) and a message \( M \) and output an authentication tag \( t \).
     \item \textbf{Construction Methods:} MACs can be constructed using either hash functions (hash-based MAC algorithms) or block ciphers (block cipher-based MAC algorithms).
@@ -726,39 +725,40 @@ Message Authentication Codes (MACs) play a crucial role in ensuring the integrit
     \item \textbf{Non-Repudiation:} A key question is whether MACs can be used for non-repudiation. Since MACs require a shared secret key, they are generally not suitable for non-repudiation purposes. Non-repudiation requires proof that cannot be repudiated by either party, typically achieved through digital signatures using asymmetric cryptography.
 \end{itemize}
 
-\subsection*{SHA-1 HMAC:}
+\subsubsection*{SHA-1 HMAC:}
 \begin{itemize}
     \item \textbf{Hash-Based MAC:} HMAC (Hash-based Message Authentication Code) using SHA-1 is a widely used hash-based MAC algorithm.
     \item \textbf{Source:} More information can be found on [Wikipedia](https://en.wikipedia.org/wiki/HMAC).
 \end{itemize}
 
-\subsection*{CBC MAC:}
+\subsubsection*{CBC MAC:}
 \begin{itemize}
     \item \textbf{Block Cipher-Based MAC:} CBC MAC (Cipher Block Chaining Message Authentication Code) is a MAC algorithm that uses a block cipher in CBC mode.
 \end{itemize}
 
-\section*{Authenticated Encryption Algorithms}
+\subsection*{Authenticated Encryption Algorithms}
 
 Authenticated encryption algorithms are critical in ensuring both confidentiality and integrity of messages in insecure communication channels.
 
-\subsection*{Need for Authenticated Encryption:}
+\subsubsection*{Need for Authenticated Encryption:}
 \begin{itemize}
     \item \textbf{Confidentiality and Integrity:} To secure messages effectively, it's important to maintain not only confidentiality but also message integrity. Encryption alone does not guarantee integrity.
     \item \textbf{Traditional Approach:} The recommended method involves encrypting the message using an encryption key \( k1 \), then computing an authentication code of the ciphertext using a separate MAC key \( k2 \). The sender transmits both the ciphertext and the tag to the receiver, who verifies the tag before decrypting the message.
     \item \textbf{Two-Key System:} This approach requires two different keys and two different algorithms, one for encryption and one for authentication.
 \end{itemize}
 
-\subsection*{Integrated Authenticated Encryption:}
+\subsubsection*{Integrated Authenticated Encryption:}
 \begin{itemize}
     \item \textbf{Single Algorithm Solution:} Authenticated encryption algorithms are designed to provide both confidentiality and integrity within a single framework, simplifying key management and processing.
 \end{itemize}
 
-\subsection*{Authenticated Encryption with Associated Data (AEAD):}
+\subsubsection*{Authenticated Encryption with Associated Data (AEAD):}
 \begin{itemize}
     \item \textbf{Purpose:} In some cases, parts of a message may not require confidentiality but still need integrity protection.
     \item \textbf{Functionality:} AEAD takes a message that requires both encryption and integrity protection, and associated data that requires only integrity protection. It uses a symmetric key to output a tag for the message and associated data, along with the ciphertext of the message.
     \item \textbf{Application:} This approach is ideal for scenarios where only a portion of the communication requires encryption, but integrity is essential for the entire message.
 \end{itemize}
+
 
 
 \section*{Public Key Cryptography (PKC)}

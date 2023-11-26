@@ -576,6 +576,747 @@ Trivium is a noteworthy example of a stream cipher that emphasizes simplicity an
 The design of Trivium allows for efficient implementation while maintaining a high level of security, making it a practical choice for systems with limited computational resources.
 
 
+\section*{Modes of Operation}
+
+Encryption modes define how block ciphers process plaintext to produce ciphertext. Two basic types are commonly distinguished:
+
+\subsection*{Monoalphabetic vs. Polyalphabetic Modes:}
+\begin{itemize}
+    \item \textbf{Monoalphabetic:} In this type of encryption mode, the encryption of each plaintext block is independent of its position in the sequence. This means that identical plaintext blocks will result in identical ciphertext blocks.
+    \item \textbf{Polyalphabetic:} Contrary to monoalphabetic, in polyalphabetic modes, the encryption of a plaintext block depends on its position in the sequence. This results in different ciphertexts for identical plaintext blocks occurring at different positions.
+    \item \textbf{Electronic Code Book (ECB):} This is a basic form of block cipher encryption where each block of plaintext is encrypted independently. ECB falls under the category of monoalphabetic encryption. However, its simplistic nature leads to security vulnerabilities, as patterns in the plaintext may remain visible in the ciphertext.
+\end{itemize}
+
+\subsection*{Security of ECB Mode:}
+Is ECB mode secure? No. The lack of dependency between encrypted blocks in ECB mode leads to significant vulnerabilities, especially when dealing with large data sets or repetitive information. It fails to disguise data patterns, making it susceptible to cryptanalysis.
+
+\subsection*{Cipher Block Chaining (CBC) Mode:}
+\begin{itemize}
+    \item \textbf{Characteristics:} In CBC mode, each block of plaintext is XORed with the previous ciphertext block before being encrypted. This means that each ciphertext block depends on all plaintext blocks processed up to that point.
+    \item \textbf{Monoalphabetic or Polyalphabetic:} CBC mode is classified as polyalphabetic because the encryption of each plaintext block is influenced by its position in the sequence and the preceding ciphertext blocks.
+    \item \textbf{Effect of a One Bit Change:} A one-bit change in the second ciphertext block in CBC mode will result in the complete change of the subsequent plaintext block during decryption. This property, known as error propagation, highlights the interdependence of blocks in CBC mode.
+\end{itemize}
+
+\section*{Hash Functions}
+
+Hash functions are fundamental in cryptography, serving as a way to convert variable-length input into a fixed-length value, commonly referred to as a digest. Key properties of cryptographic hash functions include:
+
+\subsection*{Preimage Resistance:}
+\begin{itemize}
+    \item \textbf{Definition:} For a given digest \( d \), it must be computationally hard to find a message \( M \) such that \( H(M) = d \).
+    \item \textbf{Theoretical Bound:} The theoretical bound to find a preimage for a given digest \( d \) is \( 2^{|d|} \) hash function calls. This is based on the principle that for a randomly chosen message \( M' \), \( \text{Pr}[H(M')=d]=2^{-|d|} \). Thus, the digest of one of \( 2^{|d|} \) randomly chosen messages will be \( d \).
+\end{itemize}
+
+\subsection*{Second Preimage Resistance:}
+\begin{itemize}
+    \item \textbf{Definition:} For a given message \( M \), it must be computationally hard to find a different message \( M' \) such that \( H(M')=H(M) \).
+    \item \textbf{Theoretical Bound:} The theoretical bound to find a second preimage for a given digest \( d \) is \( 2^{|d|} \), for reasons similar to those outlined in preimage resistance.
+\end{itemize}
+
+\subsection*{Collision Resistance:}
+\begin{itemize}
+    \item \textbf{Definition:} It must be computationally hard to find a message pair \( M \) and \( M' \) such that \( H(M')=H(M) \).
+    \item \textbf{Theoretical Bound:} The theoretical bound to find a collision is \( 2^{|d|/2} \) due to the birthday paradox. The birthday paradox suggests that the probability of two randomly selected messages having the same digest increases significantly with the square root of the possible digest values.
+\end{itemize}
+
+\section*{Birthday Paradox in Cryptography}
+
+The Birthday Paradox addresses the counterintuitive probability of collisions in a set, having significant implications in cryptographic hash functions.
+
+\subsection*{Collision Probability Calculation:}
+\begin{itemize}
+    \item \textbf{Scenario:} Considering randomly chosen \( t \) elements (\( x_1, x_2, \ldots, x_t \)) from a set \( A \), we assess the probability that there exists a pair (\( x_i, x_j \)) such that \( i \neq j \) and \( x_i = x_j \) (collision).
+    \item \textbf{Probability Computation:} 
+    \begin{itemize}
+        \item The probability that \( x_2 \) differs from \( x_1 \) is \( \frac{|A|-1}{|A|} \).
+        \item Continuing this logic, the probability that \( x_t \) differs from all preceding \( x_1, x_2, \ldots, x_{t-1} \) is \( \frac{|A|-(t-1)}{|A|} \).
+        \item Consequently, the probability that all values are different is the product:
+        \[
+        \prod_{i=1}^{t-1} \left(1 - \frac{i}{|A|}\right)
+        \]
+    \end{itemize}
+    \item \textbf{Approximation:} Using the approximation \( 1 + x \approx e^x \) for \( x \ll 1 \), we derive the probability of no collision as:
+    \[
+    e^{-\frac{1}{|A|}(1 + 2 + \cdots + (t-1))} = e^{-\frac{1}{|A|} \frac{t(t-1)}{2}}
+    \]
+    \item \textbf{Collision Probability:} Hence, the probability of having at least one collision is:
+    \[
+    1 - e^{-\frac{1}{|A|} \frac{t(t-1)}{2}}
+    \]
+\end{itemize}
+
+\subsection*{Determining the Collision Threshold:}
+\begin{itemize}
+    \item \textbf{Goal:} To find the minimum number of elements \( t \) required to achieve a collision probability greater than \( \frac{1}{2} \).
+    \item \textbf{Calculation:} 
+    \[
+    1 - e^{-\frac{1}{|A|} \frac{t(t-1)}{2}} > \frac{1}{2}
+    \]
+    \item \textbf{Approximation:} This leads to the inequality:
+    \[
+    t(t-1) > 2|A| \ln 2
+    \]
+    Approximating, we find \( t \) to be greater than approximately \( 1.38 \times \sqrt{|A|} \).
+    \item \textbf{Application:} 
+    \begin{itemize}
+        \item In the traditional birthday problem with \( |A|=365 \), a group size larger than 23 (since \( 1.38 \times \sqrt{365} \approx 22.44 \)) is likely to have at least one shared birthday.
+        \item In hash functions with a digest size \( |d| \), computing \( 2^{|d|/2} \) random message digests will likely result in at least two messages having the same digest, illustrating the collision resistance limit of hash functions.
+    \end{itemize}
+\end{itemize}
+
+\section*{Hash Function Constructions}
+
+Cryptographic hash functions often use specific constructions to ensure their security properties. Two notable constructions are the Merkle-Damgård and Davies-Meyer.
+
+\subsection*{Merkle-Damgård Construction:}
+\begin{itemize}
+    \item \textbf{Process:} The input message is divided into equal-sized blocks, which are then processed sequentially through a compression function. This iterative process ensures that the final output (the hash) depends on every part of the input message.
+    \item \textbf{Length Padding:} Messages are padded with a bit pattern, typically '100...0', followed by the length of the message. This padding is crucial to ensure that different messages do not produce the same hash due to coincidental alignment or similar endings.
+    \item \textbf{Finalization:} An optional finalization step can be added to further randomize the hash output.
+    \item \textbf{Provable Security:} The security of the Merkle-Damgård construction is directly tied to the collision resistance of its compression function. If the compression function is collision-resistant, so is the overall hash function.
+\end{itemize}
+
+\subsection*{Davies-Meyer Construction:}
+\begin{itemize}
+    \item \textbf{Compression Function:} This construction uses a block cipher as the basis for its compression function.
+    \item \textbf{Provable Security:} The Davies-Meyer construction is provably secure (collision-resistant) under the assumption that the underlying block cipher is secure. This means that the ability to find collisions in the hash function is equivalent to breaking the security of the block cipher.
+\end{itemize}
+
+\section*{SHA-1 and Its Successors}
+
+SHA-1 is a widely recognized cryptographic hash function, with a notable history and evolution leading to more secure successors.
+
+\subsection*{SHA-1:}
+\begin{itemize}
+    \item \textbf{Design and Origin:} SHA-1, developed by the National Security Agency (NSA), is based on Ron Rivest's MD4 and MD5 designs. Initially released as SHA in 1993, SHA-1 was introduced in 1995.
+    \item \textbf{Output Size:} It produces a 160-bit hash value, commonly rendered as a 40-digit hexadecimal number.
+    \item \textbf{Vulnerabilities:} In 2005, significant flaws were discovered in SHA-1, indicating vulnerabilities to collision attacks.
+\end{itemize}
+
+\subsection*{SHA-2:}
+\begin{itemize}
+    \item \textbf{Introduction:} As a response to the vulnerabilities in SHA-1, SHA-2 was developed, offering enhanced security features.
+    \item \textbf{Variants:} SHA-2 includes variants with 256- and 512-bit output sizes, significantly increasing its resistance to collision attacks compared to SHA-1.
+    \item \textbf{Current Security:} SHA-2 remains secure and widely used in various cryptographic applications and protocols.
+\end{itemize}
+
+\subsection*{SHA-3:}
+\begin{itemize}
+    \item \textbf{Development:} SHA-3, developed through a public competition, was finalized in 2012. The winning algorithm was Keccak.
+    \item \textbf{Distinct Approach:} Unlike SHA-2, SHA-3 is not based on the Merkle-Damgård construction, instead using a unique sponge construction, which provides a higher level of security and flexibility.
+    \item \textbf{Role:} SHA-3 complements SHA-2, offering an alternative in case future vulnerabilities are discovered in the SHA-2 family.
+\end{itemize}
+
+\section*{Message Authentication Codes (MACs)}
+
+Message Authentication Codes (MACs) play a crucial role in ensuring the integrity and authenticity of messages in cryptographic communication.
+
+\subsection*{Concept and Operation:}
+\begin{itemize}
+    \item \textbf{Basic Principle:} MACs can be considered as keyed hash functions. They take a key \( K \) and a message \( M \) and output an authentication tag \( t \).
+    \item \textbf{Construction Methods:} MACs can be constructed using either hash functions (hash-based MAC algorithms) or block ciphers (block cipher-based MAC algorithms).
+    \item \textbf{Purpose:} MACs are used to verify both the integrity and authenticity of messages.
+    \item \textbf{Process:}
+    \begin{itemize}
+        \item The sender and receiver share a symmetric key securely.
+        \item The sender computes the MAC tag of the message and sends both the message and the tag over an insecure channel.
+        \item Upon receipt, the receiver computes the MAC tag of the received message using the pre-shared key and compares it with the received tag.
+        \item If the tags match, the receiver can be confident that the message has not been altered and can authenticate the source, assuming the key is only known to the sender and receiver.
+    \end{itemize}
+    \item \textbf{Non-Repudiation:} A key question is whether MACs can be used for non-repudiation. Since MACs require a shared secret key, they are generally not suitable for non-repudiation purposes. Non-repudiation requires proof that cannot be repudiated by either party, typically achieved through digital signatures using asymmetric cryptography.
+\end{itemize}
+
+\subsection*{SHA-1 HMAC:}
+\begin{itemize}
+    \item \textbf{Hash-Based MAC:} HMAC (Hash-based Message Authentication Code) using SHA-1 is a widely used hash-based MAC algorithm.
+    \item \textbf{Source:} More information can be found on [Wikipedia](https://en.wikipedia.org/wiki/HMAC).
+\end{itemize}
+
+\subsection*{CBC MAC:}
+\begin{itemize}
+    \item \textbf{Block Cipher-Based MAC:} CBC MAC (Cipher Block Chaining Message Authentication Code) is a MAC algorithm that uses a block cipher in CBC mode.
+\end{itemize}
+
+\section*{Authenticated Encryption Algorithms}
+
+Authenticated encryption algorithms are critical in ensuring both confidentiality and integrity of messages in insecure communication channels.
+
+\subsection*{Need for Authenticated Encryption:}
+\begin{itemize}
+    \item \textbf{Confidentiality and Integrity:} To secure messages effectively, it's important to maintain not only confidentiality but also message integrity. Encryption alone does not guarantee integrity.
+    \item \textbf{Traditional Approach:} The recommended method involves encrypting the message using an encryption key \( k1 \), then computing an authentication code of the ciphertext using a separate MAC key \( k2 \). The sender transmits both the ciphertext and the tag to the receiver, who verifies the tag before decrypting the message.
+    \item \textbf{Two-Key System:} This approach requires two different keys and two different algorithms, one for encryption and one for authentication.
+\end{itemize}
+
+\subsection*{Integrated Authenticated Encryption:}
+\begin{itemize}
+    \item \textbf{Single Algorithm Solution:} Authenticated encryption algorithms are designed to provide both confidentiality and integrity within a single framework, simplifying key management and processing.
+\end{itemize}
+
+\subsection*{Authenticated Encryption with Associated Data (AEAD):}
+\begin{itemize}
+    \item \textbf{Purpose:} In some cases, parts of a message may not require confidentiality but still need integrity protection.
+    \item \textbf{Functionality:} AEAD takes a message that requires both encryption and integrity protection, and associated data that requires only integrity protection. It uses a symmetric key to output a tag for the message and associated data, along with the ciphertext of the message.
+    \item \textbf{Application:} This approach is ideal for scenarios where only a portion of the communication requires encryption, but integrity is essential for the entire message.
+\end{itemize}
+
+
+\section*{Public Key Cryptography (PKC)}
+
+Public Key Cryptography represents a fundamental shift in cryptographic practices, introducing the concept of asymmetric key cryptography.
+
+\subsection*{Introduction and Historical Background:}
+\begin{itemize}
+    \item \textbf{Significance:} PKC is considered the single most important idea in modern cryptography.
+    \item \textbf{Origin:} Proposed by Whitfield Diffie and Martin Hellman in 1976, PKC introduced a new paradigm in cryptographic key management.
+\end{itemize}
+
+\subsection*{Asymmetric Key Cryptography:}
+\begin{itemize}
+    \item \textbf{Key Pair:} In PKC, each individual has a pair of keys: a public key (\( pk \)) and a private key (\( tk \)).
+    \item \textbf{Security Principle:} It should be computationally infeasible to derive the private key (\( tk \)) from the public key (\( pk \)). This allows the public key to be openly shared.
+    \item \textbf{Encryption and Decryption Process:}
+    \begin{itemize}
+        \item To encrypt a message \( p \), the sender uses the receiver's public key: \( c = F_{pk}(p) \).
+        \item The receiver decrypts the ciphertext \( c \) using their private key: \( p = E_{tk}(c) \).
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Solving the Key Distribution Problem:}
+\begin{itemize}
+    \item \textbf{Classical Challenge:} In traditional symmetric key cryptography, sharing a secret key over an insecure channel poses a significant challenge.
+    \item \textbf{PKC Solution:} With PKC, a person can make their public key \( pk \) available to anyone. This allows anyone to send them an encrypted message, but only the holder of the corresponding private key can decrypt these messages.
+\end{itemize}
+
+\subsection*{Message Source Authentication:}
+\begin{itemize}
+    \item \textbf{Signing Messages:} PKC allows an individual to 'sign' a message using their private key. This signature is unique and verifiable.
+    \item \textbf{Verification:} Anyone with access to the public key can verify the signature, thus authenticating the message source.
+    \item \textbf{Non-Repudiation:} This feature also provides non-repudiation, as only the owner of the private key could have created the signature.
+\end{itemize}
+
+\section*{Diffie-Hellman Key Exchange}
+
+The Diffie-Hellman key exchange is a fundamental protocol in public key cryptography for securely exchanging cryptographic keys over a public channel.
+
+\subsection*{Discrete Logarithm Problem (DLP):}
+\begin{itemize}
+    \item \textbf{Problem Statement:} The DLP asks: given \( g \) and \( y = g^x \), what is \( x \)?
+    \item \textbf{Difficulty:} While the problem is easy to solve over \( \mathbb{Z} \) (the integers), it becomes hard over \( \mathbb{Z}_p \) (integers modulo a prime \( p \)).
+\end{itemize}
+
+\subsection*{Diffie-Hellman Key Exchange Protocol:}
+\begin{itemize}
+    \item \textbf{Public Information:} A prime number \( p \) and a generator \( g \).
+    \item \textbf{Private Selections:} Alice chooses a random secret \( a \), and Bob chooses a random secret \( b \).
+    \item \textbf{Exchange:}
+    \begin{itemize}
+        \item Alice sends \( g^a \mod p \) to Bob.
+        \item Bob sends \( g^b \mod p \) to Alice.
+        \item Both compute the shared secret \( K = g^{ab} \mod p \) independently.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Security of Diffie-Hellman:}
+\begin{itemize}
+    \item \textbf{DLP and DH Problem (DHP):} The DHP asks: given \( p, g, g^a \mod p, g^b \mod p \), what is \( g^{ab} \mod p \)? It's conjectured that solving DHP is as hard as solving DLP.
+\end{itemize}
+
+\subsection*{Efficiency of Diffie-Hellman:}
+\begin{itemize}
+    \item \textbf{Repeated Squaring Method:} A common technique for efficiently computing \( g^a \mod p \) involves repeated squaring, starting with the most significant bit of the exponent.
+    \item \textbf{Example:} To compute \( 3^{25} \mod 20 \):
+    \begin{align*}
+        y_0 &= 3^1 \mod 20 = 3 \\
+        y_1 &= 3^{11} \mod 20 = 3^2 \cdot 3 \mod 20 = 7 \\
+        y_2 &= 3^{110} \mod 20 = 7^2 \mod 20 = 9 \\
+        y_3 &= 3^{1100} \mod 20 = 9^2 \mod 20 = 1 \\
+        y_4 &= 3^{11001} \mod 20 = 1^2 \cdot 3 \mod 20 = 3
+    \end{align*}
+    \item \textbf{Preprocessing:} Further efficiency can be gained by preprocessing \( x^i \) for \( i < 2^k \), for some \( k \).
+\end{itemize}
+
+
+\section*{RSA Cryptosystem}
+
+The RSA Cryptosystem, developed by Rivest, Shamir, and Adleman in 1977, is the first successful public key algorithm and a cornerstone in the field of cryptography.
+
+\subsection*{Number Theory Review:}
+\begin{itemize}
+    \item \textbf{Relative Primality:} Numbers \( m \) and \( n \) are relatively prime if \( \gcd(m, n) = 1 \).
+    \item \textbf{The Set \( \mathbb{Z}_n^* \):} This set contains numbers in \( \mathbb{Z}_n \) that are relatively prime to \( n \).
+    \item \textbf{Euler's Totient Function \( \varphi(n) \):} Defined as the size of \( \mathbb{Z}_n^* \). For example, \( \varphi(6) = 2 \), \( \varphi(7) = 6 \).
+    \item \textbf{Euler's Theorem:} For all \( m \in \mathbb{Z}_n^* \), \( m^{\varphi(n)} \equiv 1 \mod n \).
+    \item \textbf{Linear Combinations:} If \( \gcd(m, n) = d \), then integers \( a, b \) exist such that \( a \cdot m + b \cdot n = d \).
+\end{itemize}
+
+\subsection*{RSA Algorithm:}
+\begin{itemize}
+    \item \textbf{Key Generation:}
+    \begin{itemize}
+        \item Choose large primes \( p, q \); let \( N = pq \).
+        \item Compute \( \varphi(N) = (p-1)(q-1) \).
+        \item Choose \( e \) such that \( \gcd(e, \varphi(N)) = 1 \).
+        \item Compute \( d = e^{-1} \mod \varphi(N) \) (i.e., \( de \equiv 1 \mod \varphi(N) \)).
+    \end{itemize}
+    \item \textbf{Public and Private Keys:} \( N, e \) are public, \( d \) is the private key.
+    \item \textbf{Encryption:} \( E(x) = x^e \mod N \)
+    \item \textbf{Decryption:} \( D(x) = x^d \mod N \)
+\end{itemize}
+
+\subsection*{Security and Efficiency of RSA:}
+\begin{itemize}
+    \item \textbf{Security:} Based on the difficulty of factoring \( N \). Finding \( d \) is equivalent to factoring \( N \).
+    \item \textbf{Suggested Key Lengths:} Short term - 2048 bits, longer term - 4096 bits.
+    \item \textbf{Parameter Generation:} \( p, q \) should be random. Common choices for \( e \) include 3 and 65537.
+\end{itemize}
+
+\subsection*{RSA Encryption and Signature Issues:}
+\begin{itemize}
+    \item \textbf{Guessable Plaintext Problem:} If \( x \) is from a small domain, it may be vulnerable to brute-force attacks.
+    \item \textbf{Multiplicative Property and Existential Forgery:} These issues necessitate proper padding and hashing in practical implementations.
+\end{itemize}
+
+\subsection*{RSA in Practice:}
+\begin{itemize}
+    \item \textbf{PKCS \#1:} A standard by RSA Labs describing the proper use of RSA.
+    \item \textbf{Padding Schemes:} For encryption, random padding is used to prevent plaintext prediction. For signatures, fixed padding and hashing prevent obtaining valid signature-message pairs.
+\end{itemize}
+
+\section*{ElGamal Cryptosystem and Variants}
+
+The ElGamal Cryptosystem is a public key system based on the discrete logarithm problem. It offers both encryption and signature schemes.
+
+\subsection*{Structure of \( \mathbb{Z}_p^* \):}
+\begin{itemize}
+    \item For a prime \( p \), \( \mathbb{Z}_p^* \) is the set of all non-zero elements of \( \mathbb{Z}_p \).
+    \item \textbf{Fermat’s Little Theorem:} For all \( x \in \mathbb{Z}_p^* \), \( x^{p-1} \equiv 1 \mod p \).
+    \item The order of an element is the smallest positive integer \( k \) such that \( g^k \equiv 1 \mod p \).
+    \item Fact: Every \( \mathbb{Z}_p^* \) for prime \( p \) has a generator.
+\end{itemize}
+
+\subsection*{ElGamal Encryption:}
+\begin{itemize}
+    \item \textbf{Parameters:}
+    \begin{itemize}
+        \item Choose a large prime \( p \) and a generator \( g \) of \( \mathbb{Z}_p^* \).
+        \item Select \( \alpha \in \mathbb{Z}_{p-1} \), and compute \( \beta = g^\alpha \mod p \).
+        \item Public key: \( p, g, \beta \); private key: \( \alpha \).
+    \end{itemize}
+    \item \textbf{Encryption Process:} To encrypt plaintext \( x \),
+    \begin{itemize}
+        \item Choose a random \( k \in \mathbb{Z}_{p-1} \).
+        \item Compute ciphertext as \( (r, s) \), where \( r = g^k \mod p \) and \( s = x \cdot \beta^k \mod p \).
+        \item Decryption uses \( D(r, s) = s \cdot (r^\alpha)^{-1} \mod p \).
+    \end{itemize}
+\end{itemize}
+
+\subsection*{ElGamal Signature Scheme:}
+\begin{itemize}
+    \item \textbf{Signature Generation:}
+    \begin{itemize}
+        \item Use the same parameters as in encryption.
+        \item To sign a message \( m \), choose a random \( k \in \mathbb{Z}_{p-1}^* \).
+        \item Compute \( (r, s) \) as \( r = g^k \mod p \) and \( s = (m - r\alpha) \cdot k^{-1} \mod (p-1) \).
+    \end{itemize}
+    \item \textbf{Verification:} Check if \( \beta^r \cdot r^s \equiv g^m \mod p \).
+\end{itemize}
+
+\subsection*{Security Considerations:}
+\begin{itemize}
+    \item \textbf{Dependence on DLP:} The security of ElGamal relies on the difficulty of solving the discrete logarithm problem.
+    \item \textbf{Key Reuse:} Using the same \( k \) for different signatures can compromise the private key.
+    \item \textbf{Variants:} Several variants exist, especially in the signature scheme, by altering the signing equation.
+\end{itemize}
+
+\subsection*{ElGamal in Practice:}
+\begin{itemize}
+    \item \textbf{Schnorr Groups:} Utilize subgroups of \( \mathbb{Z}_p^* \) for efficiency.
+    \item \textbf{RSA vs. ElGamal:} ElGamal provides an alternative to RSA, particularly in scenarios where RSA's multiplicative property is a concern.
+\end{itemize}
+
+\section*{Digital Signature Algorithm (DSA)}
+
+The Digital Signature Algorithm is a standard for digital signatures developed by the United States government and the National Security Agency.
+
+\subsection*{Background and Characteristics:}
+\begin{itemize}
+    \item \textbf{Origin:} DSA is based on the ElGamal Signature Scheme and Schnorr signatures. 
+    \item \textbf{Patent-Free:} Unlike RSA, DSA is not encumbered by patents.
+    \item \textbf{Usage Limitation:} DSA is designed solely for digital signatures and cannot be used for encryption.
+    \item \textbf{Objections:} Initial objections to DSA included its relatively untested nature compared to RSA, slower verification, and the industry's existing investment in RSA technology.
+\end{itemize}
+
+\subsection*{DSA Parameters and Keys:}
+\begin{itemize}
+    \item \textbf{Parameters:} Choose primes \( p \) and \( q \) where \( q \mid (p-1) \), and \( g \in \mathbb{Z}_p^* \) of order \( q \). Use a hash function \( H: \{0,1\}^* \rightarrow \mathbb{Z}_q \).
+    \item \textbf{Keys:} The private key is \( \alpha \in \mathbb{Z}_q \); the public key is \( \beta = g^\alpha \mod p \).
+\end{itemize}
+
+\subsection*{Signature Generation and Verification:}
+\begin{itemize}
+    \item \textbf{Signature:} For a message \( M \), the signature is a pair \( (r, s) \) where:
+    \begin{itemize}
+        \item Choose a random \( k \in \mathbb{Z}_q \).
+        \item Compute \( v = g^k \mod p \) and \( r = v \mod q \).
+        \item Compute \( s = (H(M) + r \cdot \alpha) \cdot k^{-1} \mod q \).
+    \end{itemize}
+    \item \textbf{Verification:} 
+    \begin{itemize}
+        \item Compute \( v' = g^{H(M)} \cdot s^{-1} \cdot \beta^{r} \cdot s^{-1} \mod p \).
+        \item Check if \( r \equiv v' \mod q \).
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Advantages of DSA:}
+\begin{itemize}
+    \item \textbf{Reduced Size:} The signature components \( r \) and \( s \) in DSA are typically 160 bits each, making the signature more compact compared to RSA.
+\end{itemize}
+
+\section*{Elliptic Curve Cryptosystems}
+
+Elliptic Curve Cryptography (ECC) is a public key encryption technique based on elliptic curves over finite fields. It offers advantages in terms of efficiency and security.
+
+\subsection*{Generalized Discrete Logarithm Problem (DLP):}
+\begin{itemize}
+    \item In any group \( (G, \cdot) \), for \( x \in G \), define \( x^n = x \cdot x \cdot \ldots \cdot x \) (\( n \) times).
+    \item \textbf{DLP:} Given \( y = x^n \), for known \( x, y \), find \( n \).
+\end{itemize}
+
+\subsection*{Elliptic Curves over \( \mathbb{Z}_p \):}
+\begin{itemize}
+    \item \textbf{Definition:} The set of points \( (x, y) \in \mathbb{Z}_p \times \mathbb{Z}_p \) satisfying \( y^2 \equiv x^3 + ax + b \mod p \), along with an additional point at infinity, denoted as 0.
+    \item \textbf{Group Operation:} For points \( P \) and \( Q \) on the curve, \( P \cdot Q \) is the inverse of the third intersection point of the line through \( P \) and \( Q \) with the curve. The inverse of \( P = (x, y) \) is \( P^{-1} = (x, -y) \).
+\end{itemize}
+
+\subsection*{Properties and Advantages of ECC:}
+\begin{itemize}
+    \item \textbf{Efficiency:} Exponentiation operations on elliptic curves are efficient.
+    \item \textbf{Security:} The elliptic curve DLP is considered harder than the traditional DLP in \( \mathbb{Z}_p \), allowing for smaller key sizes with equivalent security.
+    \item \textbf{Applications:} ECC is popular for constrained devices like smart cards due to its efficiency.
+    \item \textbf{Comparison with RSA:} ECC offers advantages such as smaller key sizes, compact hardware implementation, and faster private key operations.
+    \item \textbf{Endorsement:} ECC is licensed and recommended by the NSA.
+\end{itemize}
+
+\subsection*{ECC vs. RSA - Key Size Comparison:}
+\begin{itemize}
+    \item NIST guidelines suggest significantly smaller key sizes for ECC compared to RSA/DH/ElGamal for equivalent security levels. For instance, a 160-bit ECC key offers similar security to a 1024-bit RSA key.
+\end{itemize}
+
+
+\section*{Key Management in Public Key Cryptography}
+
+Key management is a crucial aspect of PKC, addressing challenges like passive and active attacks, and establishing trust through third parties.
+
+\subsection*{Key Distribution and MitM Attacks:}
+\begin{itemize}
+    \item \textbf{Simple PKC:} Handles key distribution against passive adversaries (eavesdroppers) but is vulnerable to active adversaries who can perform MitM attacks by sending a fake public key.
+    \item \textbf{MitM Attack on RSA:} An adversary can intercept the public key and insert their own, decrypting and re-encrypting messages in transit.
+\end{itemize}
+
+\subsection*{Trusted Third Parties:}
+\begin{itemize}
+    \item \textbf{Key Distribution Center (KDC):} In symmetric key cryptography, a KDC is used for distributing session keys to parties who have previously shared secret keys with the KDC.
+    \item \textbf{Certificate Authority (CA):} In PKC, a CA issues certificates for public keys, enhancing trust in the ownership of public keys.
+\end{itemize}
+
+\subsection*{Key Distribution Protocols:}
+\begin{itemize}
+    \item \textbf{With KDC:} Parties request the KDC for a session key for secure communication.
+    \item \textbf{With CA:} Public keys are certified by the CA, which can be used in protocols like SSL for secure key exchange.
+\end{itemize}
+
+\subsection*{Man-in-the-Middle (MitM) Attack against DH:}
+\begin{itemize}
+    \item The adversary intercepts the DH parameters and sends their own parameters, leading to compromised session keys.
+\end{itemize}
+
+\subsection*{Public Key Infrastructure (PKI):}
+\begin{itemize}
+    \item \textbf{Components:} A PKI system includes a CA, certificate repositories, and a mechanism for certificate revocation.
+    \item \textbf{Models:} PKI can follow various models, such as monopoly, oligarchy, or anarchy, each with its advantages and drawbacks.
+\end{itemize}
+
+\subsection*{Certificate Management and Revocation:}
+\begin{itemize}
+    \item \textbf{Revocation:} Mechanisms like Certificate Revocation Lists (CRLs) and online revocation servers ensure that compromised certificates are invalidated.
+    \item \textbf{X.509 Certificates:} A common standard for certificates, detailing fields like serial number, issuer, validity period, and public key information.
+\end{itemize}
+
+\subsection*{Comparison: KDC vs. CA:}
+\begin{itemize}
+    \item \textbf{KDC:} Based on symmetric keys, faster but needs to be online, suitable for LANs.
+    \item \textbf{CA:} Doesn't need to be online, more scalable for WANs like the Internet, and provides better privacy as it cannot decrypt conversations.
+\end{itemize}
+
+\section*{Authentication Techniques}
+
+Authentication is a fundamental aspect of security, involving various methods to verify the identity of users or systems.
+
+\subsection*{Non-Cryptographic Techniques:}
+\begin{itemize}
+    \item \textbf{Address-Based:} Using identifiers like email addresses or IP addresses.
+    \item \textbf{Passwords:} Traditional method based on secret knowledge.
+    \item \textbf{Biometrics:} Using unique biological characteristics for identification.
+\end{itemize}
+
+\subsection*{Cryptographic Techniques:}
+\begin{itemize}
+    \item \textbf{Pre-Shared Symmetric Key:} Using a secret key shared between parties.
+    \item \textbf{Key Distribution Center (KDC):} Central authority for key management in symmetric cryptography.
+    \item \textbf{Public Key Based:} Using public key cryptography for authentication.
+\end{itemize}
+
+\subsection*{Authentication Factors:}
+\begin{itemize}
+    \item \textbf{What You Know:} Passwords and PINs.
+    \item \textbf{What You Have:} Physical items like keys or smart cards.
+    \item \textbf{What You Are:} Biometric data like fingerprints or retinal patterns.
+    \item \textbf{Two-Factor Authentication:} Using two different types of authentication for increased security.
+\end{itemize}
+
+\subsection*{Password Security Challenges:}
+\begin{itemize}
+    \item \textbf{Eavesdropping:} Risk of passwords being observed or intercepted.
+    \item \textbf{On-Line Password Guessing:} Attempting to guess passwords through repeated login attempts.
+    \item \textbf{Off-Line Password Guessing:} Attacks on stolen password files.
+    \item \textbf{Dictionary Attacks:} Using a list of common passwords to attempt access.
+    \item \textbf{Pre-Computed Tables:} Using pre-calculated hash values for known passwords to find matches.
+\end{itemize}
+
+\subsection*{Defenses Against Password Attacks:}
+\begin{itemize}
+    \item \textbf{Salting:} Adding a random value to passwords before hashing to prevent pre-computed table attacks.
+    \item \textbf{Secure Password Hashing:} Using computationally intensive hashing methods to slow down attackers. Examples include PBKDF2, bcrypt, scrypt, and Argon2.
+\end{itemize}
+
+
+\section*{Cryptographic Authentication}
+
+Cryptographic authentication involves using cryptographic techniques to verify the identity of users or systems, addressing the limitations of simple password authentication.
+
+\subsection*{Symmetric Key Challenge-Response:}
+\begin{itemize}
+    \item \textbf{Protocol Example:} In a scenario where Alice and Bob share a symmetric key \( K_{AB} \), and \( F \) is a cryptographic function (like hash or encryption):
+    \begin{itemize}
+        \item Alice initiates authentication.
+        \item Bob sends a random challenge \( R \).
+        \item Alice responds with \( F(K_{AB}, R) \).
+    \end{itemize}
+    \item \textbf{Use in WPA2:} This method is employed in Wi-Fi Protected Access 2 (WPA2) for secure wireless communication.
+\end{itemize}
+
+\subsection*{Mutual Authentication:}
+\begin{itemize}
+    \item \textbf{Dual Verification:} Both parties, Alice and Bob, authenticate each other.
+    \item \textbf{Example Protocol:} Using random numbers \( R_1 \) and \( R_2 \) generated by Bob and Alice, respectively, they each prove their identity by correctly responding to the other's challenge.
+    \item \textbf{Reflection Attack Prevention:} Use different keys or formatted challenges to prevent reflection attacks, where the adversary establishes parallel sessions.
+\end{itemize}
+
+\subsection*{Key Establishment with KDC:}
+\begin{itemize}
+    \item \textbf{Protocol:} A KDC facilitates secure communication by providing a session key \( K_{AB} \) to both Alice and Bob.
+    \item \textbf{Pre-Shared Keys:} Alice and Bob each have a pre-shared key with the KDC (\( K_A \) and \( K_B \), respectively).
+    \item \textbf{Freshness Concern:} Protocols need to ensure the freshness of \( K_{AB} \) to prevent replay attacks.
+\end{itemize}
+
+\subsection*{Considerations in Cryptographic Authentication:}
+\begin{itemize}
+    \item \textbf{Dictionary Attacks:} If \( K_{AB} \) is derived from a password, there is a risk of dictionary attacks. Protocols must be designed to mitigate this.
+    \item \textbf{Initiator Identity Proof:} The party initiating communication should be the first to prove its identity to prevent certain types of attacks.
+\end{itemize}
+
+\subsection*{Needham-Schroeder Protocol}
+
+Developed in 1978, the Needham-Schroeder Protocol is a foundational cryptographic protocol for secure authentication and key exchange.
+
+\begin{enumerate}
+    \item Alice initiates the protocol by sending her identity, Bob's identity, and a nonce \( R_1 \) to the Key Distribution Center (KDC).
+    \item The KDC responds with a message encrypted with Bob's key \( K_B \). This message includes \( R_1 \), Bob's identity, a session key \( K_{AB} \), and a "ticket" for Bob. The ticket itself contains \( K_{AB} \) and Alice's identity, encrypted with a key \( K_C \).
+    \item Alice sends this ticket to Bob, along with a message encrypted with \( K_{AB} \) containing a new nonce \( R_2 \).
+    \item Bob decrypts the ticket, retrieves \( K_{AB} \), and uses it to send back a message encrypted with \( K_{AB} \) containing \( R_2 - 1 \) and a new nonce \( R_3 \).
+    \item Alice responds with a message encrypted with \( K_{AB} \) containing \( R_3 - 1 \), completing the mutual authentication process.
+\end{enumerate}
+
+\subsection*{Otway-Rees Authentication Protocol}
+
+The Otway-Rees Authentication Protocol, designed in 1987, improves upon earlier protocols by using session identifiers for enhanced security.
+
+\begin{enumerate}
+    \item Alice and Bob initiate the protocol by sending a message to the KDC. This message includes their identities, a session identifier \( R \), and additional random numbers \( R_A \) and \( R_B \), each encrypted with their respective keys shared with the KDC.
+    \item The KDC decrypts these messages, verifies the identities and session identifier, and sends back responses to both Alice and Bob. These responses include the session key \( K_{AB} \), encrypted with each party's key.
+\end{enumerate}
+\section*{Kerberos Protocol}
+
+Kerberos is a cryptographic authentication system for distributed environments, developed as part of Project Athena at MIT in the 1980s. It is widely used across various operating systems for network authentication.
+
+\subsection*{Features and Requirements:}
+\begin{itemize}
+    \item \textbf{Design Goals:} Focus on security, reliability, transparency, and scalability.
+    \item \textbf{Authentication Method:} Based on symmetric-key authentication involving a Key Distribution Center (KDC).
+    \item \textbf{Advantages:}
+    \begin{itemize}
+        \item Provides secure authentication mechanisms.
+        \item Supports single sign-on functionality.
+        \item Ensures secure data flow within the network.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Basic Kerberos Protocol}
+Kerberos uses symmetric cryptography and a trusted third party (KDC) for secure key distribution and authentication.
+\begin{enumerate}
+    \item Alice requests to communicate with Bob, sending a nonce \( R_1 \), her identity, and Bob's identity to the KDC.
+    \item The KDC responds with an encrypted message (using Bob's key \( K_B \)) containing \( R_1 \), Bob's identity, a session key \( K_{AB} \), and a ticket for Bob. The ticket includes \( K_{AB} \), Alice's identity, and an expiration time, encrypted with a key \( K_C \).
+    \item Alice sends the ticket to Bob, along with a message encrypted with \( K_{AB} \) containing a timestamp \( T \).
+    \item Bob responds with a message encrypted with \( K_{AB} \) containing \( T+1 \), completing the mutual authentication.
+\end{enumerate}
+
+\subsection*{Kerberos Keys:}
+\begin{itemize}
+    \item Each participant, or "principal", shares a master key with the KDC.
+    \item \textbf{Key Types:}
+    \begin{itemize}
+        \item \( K_A \): Alice's master key, typically derived from her password, used for initial authentication.
+        \item \( S_A \): Alice's session key, generated post-authentication and used instead of \( K_A \).
+        \item \( K_{AB} \): Session key shared between Alice and Bob.
+    \end{itemize}
+    \item \textbf{Ticket Granting Tickets (TGT):} Issued to a principal (like Alice) by the KDC after login, containing \( S_A \) and encrypted with the KDC's key. It's used to obtain session keys for specific services.
+\end{itemize}
+
+\subsection*{Logging into the Network:}
+\begin{itemize}
+    \item The user's workstation converts the password into a symmetric key.
+    \item Upon receiving credentials from the KDC, the workstation decrypts them using this key.
+    \item Successful decryption authenticates the user, and the workstation retains the TGT for future requests.
+    \item The TGT contains all necessary session information, allowing the KDC to manage authentication without storing volatile data.
+\end{itemize}
+
+\subsection*{Accessing a Remote Principal:}
+\begin{itemize}
+    \item Post-authentication, communication between Alice and Bob (or any two principals) can vary based on security requirements:
+    \begin{itemize}
+        \item Unprotected (plain text).
+        \item Authenticated only.
+        \item Both encrypted and authenticated.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Multiple Realms in Kerberos:}
+\begin{itemize}
+    \item Kerberos supports the concept of multiple realms, wherein different KDCs (e.g., KDC A and KDC B) can interoperate.
+    \item For cross-realm authentication, KDCs must be registered with each other and trust each other's authentication processes.
+\end{itemize}
+
+\section*{Message Authentication}
+
+Message Authentication is crucial for verifying the integrity and origin of a message in cryptographic communications.
+
+\subsection*{Early Days and Kerberos:}
+\begin{itemize}
+    \item In the 1980s, the concept of MACs (Message Authentication Codes) was not fully established.
+    \item \textbf{Kerberos' Approach:} Initially, Kerberos used CRC-32 checksums combined with DES encryption to serve as a MAC.
+    \item \textbf{Security Considerations:}
+    \begin{itemize}
+        \item \textit{Non-Cryptographic Checksums:} Using non-crypto checksums like CRC-32 with encryption is not secure if the message is in plaintext.
+        \item \textit{Block Cipher Compatibility:} With block ciphers like DES, this approach is mostly secure.
+        \item \textit{Stream Cipher Compatibility:} Using CRC-32 with stream ciphers can be problematic, as demonstrated in the WEP protocol.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Major Problems with WEP:}
+\begin{itemize}
+    \item \textbf{Wired Equivalent Privacy (WEP):} The first encryption protocol for 802.11 Wi-Fi networks.
+    \item \textbf{Security Flaws:}
+    \begin{itemize}
+        \item \textit{Stream Cipher Usage:} WEP used the RC4 stream cipher for challenge-response authentication, which was not ideal.
+        \item \textit{Initialization Vector (IV):} The use of a 24-bit IV increased the risk of IV collision and replay attacks.
+        \item \textit{Linear Checksum with Stream Cipher:} Using CRC-32, a linear checksum, with RC4 led to significant security vulnerabilities.
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Message Authentication in WEP:}
+\begin{itemize}
+    \item \textbf{MAC Algorithm in WEP:}
+    \begin{itemize}
+        \item The CRC-32 checksum is computed over the message.
+        \item Both the message and the checksum are encrypted with RC4.
+        \item \textbf{Vulnerability:} Since RC4 is a stream cipher, controlled changes can be made to the encrypted message while still maintaining a valid checksum, leading to potential security breaches.
+    \end{itemize}
+\end{itemize}
+
+\section*{Public Key Challenge-Response}
+
+Public Key Challenge-Response mechanisms are vital in cryptographic protocols for authenticating identity using public key cryptography.
+
+\subsection*{Challenge-Response by Signature:}
+\begin{itemize}
+    \item \textbf{Process:} Alice authenticates herself to Bob using her digital signature.
+    \item \textbf{Operation:}
+    \begin{enumerate}
+        \item Bob sends a random challenge \( R \) to Alice.
+        \item Alice signs the challenge using her private key: \( \text{Sign}_A(R) \).
+        \item Alice sends this signature back to Bob.
+        \item Bob verifies the signature using Alice's public key to confirm her identity.
+    \end{enumerate}
+\end{itemize}
+
+\subsection*{Challenge-Response by Decryption:}
+\begin{itemize}
+    \item \textbf{Process:} Alice proves her identity to Bob by decrypting a message encrypted with her public key.
+    \item \textbf{Operation:}
+    \begin{enumerate}
+        \item Bob sends a message encrypted with Alice's public key: \( E_A(R) \).
+        \item Alice decrypts the message using her private key to retrieve \( R \).
+        \item Alice sends \( R \) back to Bob to prove her identity.
+    \end{enumerate}
+\end{itemize}
+
+\subsection*{Pitfalls and Considerations:}
+\begin{itemize}
+    \item \textbf{Key Management Challenges:} Remembering or safely storing public/private keys can be problematic for ordinary users.
+    \item \textbf{Solutions:}
+    \begin{itemize}
+        \item Store keys in an electronic token, like a USB drive.
+        \item Retrieve keys from a server using password-based authentication and encryption.
+    \end{itemize}
+    \item \textbf{Security Precautions:}
+    \begin{itemize}
+        \item Avoid using the same key for multiple purposes (e.g., both for logging in and signing documents).
+        \item Always hash incoming challenges with context information before signing.
+        \item Use formatted challenges to avoid misuse by adversaries.
+    \end{itemize}
+\end{itemize}
+
+
+\section*{Nonces in Cryptographic Protocols}
+
+Nonces, or "numbers used once", are unique values generated for a single session or transaction in cryptographic protocols, ensuring freshness and preventing replay attacks.
+
+\subsection*{Definition and Purpose:}
+\begin{itemize}
+    \item \textbf{Nonce:} A value created specifically for a single use in cryptographic communication, often to ensure that old communications cannot be reused in replay attacks.
+\end{itemize}
+
+\subsection*{Types of Nonces:}
+\begin{itemize}
+    \item \textbf{Random Numbers:} Used when unpredictability is crucial. Random nonces are ideal for scenarios where the nonce must not be guessable.
+    \item \textbf{Timestamps:} Utilized in situations where synchronized clocks are available. Timestamps help in ensuring the freshness of a message or transaction.
+    \item \textbf{Sequence Numbers:} Appropriate in contexts where predictability is acceptable. Sequence numbers are often used in ordered communication processes.
+\end{itemize}
+
+\subsection*{Generation and Usage:}
+\begin{itemize}
+    \item \textbf{Random Nonces:} Generated using cryptographic random number generators to ensure unpredictability.
+    \item \textbf{Timestamp-Based Nonces:} Can be derived by encrypting or hashing the current timestamp with a secret key to add an extra layer of security.
+    \item \textbf{Sequence Numbers:} Incremented with each transaction or message, suitable for protocols where messages are expected to follow a certain order.
+\end{itemize}
+
+\subsection*{Considerations:}
+\begin{itemize}
+    \item The choice of nonce type depends on the specific requirements of the cryptographic protocol, such as the need for unpredictability, synchronization, or order.
+    \item Nonces play a critical role in securing cryptographic communications, preventing replay attacks, and ensuring the integrity of transactions.
+\end{itemize}
+
 
 
 \end{document}

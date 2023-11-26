@@ -9,20 +9,33 @@ Topics
 - **Introduction to Network Security**
     - Possible threats to network security
     - C-I-A: Confidentiality, Integrity, Availability
-    - Threats to Confidentiality
-    - Threats to Integrity
-    - Threats to Availability
     - Different classifications of adversaries
     - Protection requirements for assets
     - Defense mechanisms in network security
         - Physical
+            - Perimeter security
         - Software/hardware
+            - Firewall
+            - WAF
+            - SIEM
+            - IDS/IPS
+            - DDoS prevention
+            - IDM (identity management)
+            - NAC (network access control)
+            - EDR (endpoint detection and response)
+            - SOAR (security orchestration automation and response)
+            - Vulnerability management
+            - Pentest
+            - Policies, procedures
+            - Compliance checks
+            - Anomaly detection
         - Cryptography and secure communication
     - Questions and Answers
     - Potential of adversaries
         - Passive attacks
         - Active attacks
     - Security solutions on network layers
+
 - **Introduction to Cryptology**
     - Discrete Logarithm Problem (DLP)
     - Integer Factorization Problem
@@ -43,7 +56,9 @@ Topics
     - Computational vs. Information-Theoretic Security
     - Redundancy Check
     - Freshness
+
 - **Symmetric Key Cryptography**
+    - Symmetric Encryption Algorithm Definition
     - Block Ciphers
     - Stream Ciphers
     - Comparison: Block Ciphers vs. Stream Ciphers
@@ -54,3 +69,33 @@ Topics
         - Substitution and Permutation
         - Substitution-Permutation Network (SPN) Based Algorithm Structure
         - Feistel Type Structure
+    - Data Encryption Standard (DES)
+    - Triple Data Encryption Standard (3DES)
+    - Advanced Encryption Standard (AES)
+    - Stream Ciphers
+    - Trivium
+    - Modes of Operation
+    - Hash Functions
+    - Birthday Paradox in Cryptography
+    - Hash Function Constructions
+    - SHA-1 and Its Successors
+    - Message Authentication Codes (MACs)
+    - Authenticated Encryption Algorithms
+
+- **Public Key Cryptography (PKC)**
+    - Introduction and Historical Background
+    - Asymmetric Key Cryptography
+    - Solving the Key Distribution Problem
+    - Message Source Authentication
+    - Diffie-Hellman Key Exchange
+    - RSA Cryptosystem
+    - ElGamal Cryptosystem and Variants
+    - Digital Signature Algorithm (DSA)
+    - Elliptic Curve Cryptosystems
+    - Key Management in Public Key Cryptography
+    - Authentication Techniques
+    - Cryptographic Authentication
+    - Nonces in Cryptographic Protocols
+    - Public Key Challenge-Response
+    - Kerberos Protocol
+    - Message Authentication
